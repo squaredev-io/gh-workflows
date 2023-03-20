@@ -54,5 +54,5 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
-          cache-from: type=registry,ref=${{ secrets.docker_username }}/${{ inputs.image }}:latest
-          cache-to: type=inline
+          cache-from: type=registry,ref=${{ secrets.docker_username }}/${{ inputs.image }}:buildcache
+          cache-to: type=registry,ref=${{ secrets.docker_username }}/${{ inputs.image }}:buildcache,mode=max
