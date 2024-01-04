@@ -47,7 +47,7 @@ jobs:
           endpoint: 'tls-environment'
 
       - name: Build and push Docker image
-        uses: docker/build-push-action@v3
+        uses: docker/build-push-action@v5
         with:
           context: .
           file: ${{ inputs.dockerfile }}
