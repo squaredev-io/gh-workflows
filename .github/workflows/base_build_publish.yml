@@ -67,8 +67,6 @@ jobs:
           context: .
           file: ${{ inputs.dockerfile }}
           platforms: ${{ matrix.platform }}
-          push: true
-          tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           outputs: type=image,name=${{ secrets.docker_username }}/${{ inputs.image }},push-by-digest=true,name-canonical=true,push=true
           # cache-from: type=registry,ref=${{ secrets.docker_username }}/${{ inputs.image }}:buildcache
