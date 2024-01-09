@@ -38,27 +38,23 @@ jobs:
       - name: Check out the repo
         uses: actions/checkout@v4
 
-      - name: Log in to Docker Hub
-        uses: docker/login-action@v2
-        with:
-          username: ${{ secrets.docker_username }}
-          password: ${{ secrets.docker_access_token }}
-
       - name: Extract metadata (tags, labels) for Docker
         id: meta
         uses: docker/metadata-action@v5
         with:
           images: ${{ secrets.docker_username }}/${{ inputs.image }}
 
-      - run: docker context create tls-environment
-
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
+          
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v3
         with:
-          endpoint: 'tls-environment'
+          username: ${{ secrets.docker_username }}
+          password: ${{ secrets.docker_access_token }}
 
       - name: Build and push by digest
         id: build
@@ -96,23 +92,28 @@ jobs:
           path: /tmp/digests
           pattern: digests-*
           merge-multiple: true
+          
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
+        
       - name: Docker meta
         id: meta
         uses: docker/metadata-action@v5
         with:
           images: ${{ secrets.docker_username }}/${{ inputs.image }}
+          
       - name: Login to Docker Hub
         uses: docker/login-action@v3
         with:
           username: ${{ secrets.docker_username }}
           password: ${{ secrets.docker_access_token }}
+          
       - name: Create manifest list and push
         working-directory: /tmp/digests
         run: |
           docker buildx imagetools create $(jq -cr '.tags | map("-t " + .) | join(" ")' <<< "$DOCKER_METADATA_OUTPUT_JSON") \
-            $(printf '${{ secrets.docker_username }}/${{ inputs.image }}@sha256:%s ' *)          
+            $(printf '${{ secrets.docker_username }}/${{ inputs.image }}@sha256:%s ' *)
+
       - name: Inspect image
         run: |
           docker buildx imagetools inspect ${{ secrets.docker_username }}/${{ inputs.image }}:${{ steps.meta.outputs.version }}
