@@ -65,8 +65,8 @@ jobs:
           platforms: ${{ matrix.platform }}
           labels: ${{ steps.meta.outputs.labels }}
           outputs: type=image,name=${{ secrets.docker_username }}/${{ inputs.image }},push-by-digest=true,name-canonical=true,push=true
-          cache-from: type=registry,ref=${{ secrets.docker_username }}/${{ inputs.image }}:buildcache
-          cache-to: type=registry,ref=${{ secrets.docker_username }}/${{ inputs.image }}:buildcache,mode=max
+          cache-from: type=registry,ref=${{ secrets.docker_username }}/${{ inputs.image }}:buildcache-${{ matrix.platform }}
+          cache-to: type=registry,ref=${{ secrets.docker_username }}/${{ inputs.image }}:buildcache-${{ matrix.platform }},mode=max
 
       - name: Export digest
         run: |
