@@ -13,7 +13,7 @@ on:
       runs-on:
         required: false
         type: string
-        default: self-hosted
+        default: arc-runner-set
     secrets:
       docker_username:
         required: true
