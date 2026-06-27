@@ -60,6 +60,13 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=registry,ref=${{ secrets.docker_username }}/${{ inputs.image }}:latest
           cache-to: type=inline
+          # Recent BuildKit/build-push-action versions enable provenance & SBOM
+          # attestations by default. That turns the image into a manifest list
+          # and breaks `type=inline` + `cache-from` layer reuse, forcing a full
+          # multi-GB re-push on every run (build "pushing layers" step takes
+          # ~45m instead of ~5m). Keep these off so cache reuse keeps working.
+          provenance: false
+          sbom: false
 
       - name: Inspect image
         run: |
